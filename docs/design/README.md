@@ -58,3 +58,10 @@ init은 초기 구성, apply는 기존 구성에 프리셋을 반영할 때의 �
 ## 등록 시 저장소 상태
 
 2026-09-30 확인: main 브랜치, 커밋 없음, 원격 저장소 없음. 가져올 origin/main이 없어 fetch와 통합을 수행하지 않았다. 이번 변경은 로컬 디자인 기준 등록이며 앱 구현·배포는 포함하지 않는다.
+
+
+## 첫 구현 적용 기록
+
+2026-09-30 사용자 코딩 착수 요청에 따라 Vite 앱에 적용했다. `shadcn@4.21.0 init --preset b0 --base aria --template vite`가 생성한 구성은 `aria-nova`, neutral, Lucide, Inter다. `components.json`과 Aria Button을 생성했고 의존성은 pnpm 잠금 파일로 기록했다. 초기 npm 환경 충돌 후 pnpm으로 설치를 완료했다.
+
+앱의 `src/index.css`는 `docs/design/tokens.css`를 직접 가져와 동일한 색상 정본을 사용한다. 숫자·라틴 문자는 Inter, 한글은 시스템 고딕 계열로 표시한다. 기존 문서의 미검증·미연결 표기는 등록 당시 상태이며 현재 적용 상태는 이 절을 따른다. 공식 생성 프리셋의 색상값이 등록 토큰과 일치함을 확인했다.

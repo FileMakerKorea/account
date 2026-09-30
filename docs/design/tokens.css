@@ -1,5 +1,5 @@
 /* ACCOUNT design standard: user-provided tokens, 2026-09-30.
-   Reference artifact only; not yet connected to an application. */
+   Canonical tokens; imported by src/index.css. */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owner(uid) { return request.auth != null && request.auth.uid == uid; }
+    function realDate(value) {
+      let parts = value.split('-');
+      let year = int(parts[0]);
+      let month = int(parts[1]);
+      let day = int(parts[2]);
+      let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+      let days = month == 2 ? (leap ? 29 : 28) : (month in [4,6,9,11] ? 30 : 31);
+      return day <= days;
+    }
+    function validEntry(id) {
+      let d = request.resource.data;
+      return d.keys().hasAll(['id','title','kind','amount','date','startPeriod','endPeriod','installments','category','card','note','excluded','exclusionReason','revision'])
+        && d.keys().hasOnly(['id','title','kind','amount','date','startPeriod','endPeriod','installments','category','card','note','excluded','exclusionReason','revision'])
+        && d.id == id && d.id is string && d.id.size() <= 100
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 100
+        && d.kind in ['expense','income','transfer']
+        && d.amount is int && d.amount >= d.installments && d.amount <= 999999999999
+        && d.date is string && d.date.matches('^(19[0-9]{2}|20[0-9]{2}|2100)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$')
+        && realDate(d.date)
+        && d.startPeriod is int && d.startPeriod >= 22800 && d.startPeriod <= 25211
+        && d.endPeriod is int && d.endPeriod <= 25211 && d.endPeriod == d.startPeriod + d.installments - 1
+        && d.installments is int && d.installments >= 1 && d.installments <= 60
+        && (d.kind == 'expense' || d.installments == 1)
+        && d.category is string && d.category.size() > 0 && d.category.size() <= 40
+        && d.card is string && d.card.size() <= 40
+        && d.note is string && d.note.size() <= 500
+        && d.excluded is bool && d.exclusionReason is string && d.exclusionReason.size() <= 100
+        && (!d.excluded || d.exclusionReason.size() > 0)
+        && d.revision is int;
+    }
+    match /users/{uid}/entries/{id} {
+      allow read: if owner(uid);
+      allow create: if owner(uid) && validEntry(id) && request.resource.data.revision == 1;
+      allow update: if owner(uid) && validEntry(id) && request.resource.data.revision == resource.data.revision + 1;
+      allow delete: if owner(uid);
+    }
+  }
+}

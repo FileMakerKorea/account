@@ -241,7 +241,7 @@ Account4.xml: 같은 FileMaker 파일의 요약 보고서. AccountV4_fmp12.xml: 
 
 ## 10 Firebase 개발환경과 예금 조회 확장
 
-갱신일: 2026-09-30. Firebase Hosting 선택과 개인 본인의 실제 은행·카드 내역 조회 요구를 반영했다. 현재 Markdown 문서가 최신이며 Word·PDF는 이전 초안이다. 이 결정은 서비스 개설·결제 등록·배포를 수행했다는 뜻이 아니다.
+갱신일: 2026-09-30. Firebase Hosting 선택과 개인 본인의 실제 은행·카드 내역 조회 요구를 반영했다. 현재 Markdown 문서가 최신이며 이전 Word·PDF 초안은 사용자 요청으로 삭제했다. 이 결정은 서비스 개설·결제 등록·배포를 수행했다는 뜻이 아니다.
 
 ### 채택 방향
 
@@ -254,7 +254,7 @@ Firebase Authentication + Cloud Firestore Standard + Firebase Hosting으로 구�
 | 인증 | Firebase Authentication | 확정, 로그인 수단 미정 |
 | 데이터 | Firestore Standard | Firebase 통합 방향에 따른 설계 |
 | 웹 호스팅 | Firebase Hosting | 확정, App Hosting과 구분 |
-| 접근 제어 | Firestore Security Rules | 가족 장부 회원·역할 기준 |
+| 접근 제어 | Firestore Security Rules | 본인 UID 소유권 기준 |
 | 개발 | Node.js LTS · pnpm · Vite | 상세 버전은 구현 시 고정, Docker 필수 아님 |
 | 검증 | Vitest · Playwright · Firebase Emulator Suite | 계산·사용 흐름·보안 규칙 검증 제안 |
 | 초기 요금제 | Spark 무료 범위 우선 | 실제 사용량과 확장 기능에 따라 재검토 |
@@ -350,3 +350,10 @@ Firebase Hosting 화면 → Firebase 로그인 → 인증 토큰과 소유자를
 ### 비용과 진행 조건
 
 Firebase 화면·수동 입력은 Spark 범위로 시작할 수 있지만 금융 API 연결에 서버 함수가 필요하므로 전체 서비스의 영구 무료 운영은 확정할 수 없다. Firebase Blaze 연결 및 금융 API 별도 요금 가능성을 분리해 산정한다. 사업자 자격이 필요한 상품인지도 제공사 기준으로 확인한다. 외부 문의·가입·계약·유료 전환은 아직 수행하지 않았다.
+
+
+## 12 구현 착수 기록
+
+2026-09-30 사용자가 코딩 시작을 요청했다. 원격 main `98dc324`를 fetch·확인하고 `codex/account-app` 브랜치에서 첫 구현을 진행했다. 기획 전체가 구현 완료된 것은 아니다. 현재 기능·제한·실행·검증 방법은 루트 [README](../../README.md)를 따른다.
+
+첫 버전은 월별 집계와 거래 CRUD, 카드별 집계, 전체 계약 기준 할부, 로컬 백업, 라이트·다크를 제공한다. 개인 한 명의 범위에 맞춰 Firebase 경로는 `users/{uid}/entries/{entryId}`로 단순화했다. 할부 계약은 한 문서로 원자 저장하고 월별 회차 금액을 계산한다. 별도 장부·회원 컬렉션은 만들지 않는다. Google 로그인 연결 코드는 준비했으나 Firebase 프로젝트 정보는 미제공이며 실제 클라우드 연동·배포는 수행하지 않았다.
